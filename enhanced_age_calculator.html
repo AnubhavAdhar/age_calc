@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Age Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        input[type="date"] {
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 25px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Advanced Age Calculator</h1>
+        <input type="date" id="dob">
+        <button onclick="calculate()">Calculate</button>
+        <div class="output" id="result"></div>
+    </div>
+
+    <script>
+        function getZodiacSign(day, month) {
+            const zodiac = [
+                { sign: "Capricorn", lastDay: 19 }, { sign: "Aquarius", lastDay: 18 },
+                { sign: "Pisces", lastDay: 20 }, { sign: "Aries", lastDay: 19 },
+                { sign: "Taurus", lastDay: 20 }, { sign: "Gemini", lastDay: 20 },
+                { sign: "Cancer", lastDay: 22 }, { sign: "Leo", lastDay: 22 },
+                { sign: "Virgo", lastDay: 22 }, { sign: "Libra", lastDay: 22 },
+                { sign: "Scorpio", lastDay: 21 }, { sign: "Sagittarius", lastDay: 21 },
+                { sign: "Capricorn", lastDay: 31 }
+            ];
+            return (day <= zodiac[month].lastDay) ? zodiac[month].sign : zodiac[month + 1].sign;
+        }
+
+        function calculate() {
+            const dobInput = document.getElementById("dob").value;
+            if (!dobInput) return;
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+            let days = today.getDate() - dob.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const birthDay = dob.getDate();
+            const birthMonth = dob.getMonth();
+            const zodiac = getZodiacSign(birthDay, birthMonth);
+
+            const nextBirthday = new Date(today.getFullYear(), birthMonth, birthDay);
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            const diffTime = nextBirthday - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            const isTodayBirthday = today.getDate() === birthDay && today.getMonth() === birthMonth;
+            const birthdayMsg = isTodayBirthday ? "<br>🎉 Happy Birthday! 🎉" : "";
+
+            document.getElementById("result").innerHTML =
+                `<strong>You are ${years} years, ${months} months, and ${days} days old.</strong><br>
+                 ♈ Your zodiac sign is <strong>${zodiac}</strong>.<br>
+                 ⏳ Days until next birthday: <strong>${diffDays}</strong> days.
+                 ${birthdayMsg}`;
+        }
+    </script>
+</body>
+</html>
